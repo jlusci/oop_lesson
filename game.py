@@ -38,13 +38,32 @@ class Character(GameElement):
         return None
 
 class Gem(GameElement):
-    IMAGE = "OrangeGem"
     SOLID = False
 
     def interact(self, player):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!" % (len(player.inventory)))
-        
+
+class orangeGem(Gem):
+    IMAGE = "OrangeGem"
+
+    def interact(self, player):
+        player.inventory.append(self)
+        GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!" % (len(player.inventory)))
+
+class greenGem(Gem):
+    IMAGE = "GreenGem"
+    SOLID = True
+
+    def interact(self, player):
+        player.inventory.append(self)
+        GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder."  )
+        GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
+        deadlyrock = Rock()
+        GAME_BOARD.register(deadlyrock)
+        GAME_BOARD.set_el(PLAYER.x,PLAYER.y,deadlyrock)
+
+
 ####   End class definitions    ####
 
 def initialize():
@@ -81,10 +100,13 @@ def initialize():
 
     GAME_BOARD.draw_msg("This game is wicked awesome.")
 
-    gem = Gem()
+    gem = orangeGem()
     GAME_BOARD.register(gem)
     GAME_BOARD.set_el(3, 1, gem)
-    GAME_BOARD.set_el(0, 1, gem)
+
+    deadlygem = greenGem()
+    GAME_BOARD.register(deadlygem)
+    GAME_BOARD.set_el(0, 1, deadlygem)
 
 def keyboard_handler():
     direction = None
