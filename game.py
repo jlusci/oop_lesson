@@ -125,12 +125,16 @@ def keyboard_handler():
         next_x = next_location[0]
         next_y = next_location[1]
 
-        existing_el = GAME_BOARD.get_el(next_x, next_y)
+        if next_x in range(GAME_WIDTH) and next_y in range(GAME_HEIGHT):
 
-        if existing_el:
-            existing_el.interact(PLAYER)
+            existing_el = GAME_BOARD.get_el(next_x, next_y)
 
-        if existing_el is None or not existing_el.SOLID:
-            # If there's nothing there _or_ if the existing element is not solid, walk through
-            GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
-            GAME_BOARD.set_el(next_x, next_y, PLAYER)
+            if existing_el:
+                existing_el.interact(PLAYER)
+
+            if existing_el is None or not existing_el.SOLID:
+                # If there's nothing there _or_ if the existing element is not solid, walk through
+                GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
+                GAME_BOARD.set_el(next_x, next_y, PLAYER)
+        else:
+            GAME_BOARD.draw_msg("Like we'd like you go off the map!  No go.")
