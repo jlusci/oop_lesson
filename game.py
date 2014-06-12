@@ -44,7 +44,7 @@ class Chest(GameElement):
         if 'key' in player.inventory:
             GAME_BOARD.draw_msg("Congratulations! You win!")
             player.MOVES_TAKEN = -20 # game over
-            star = Heart()
+            star = Star()
             GAME_BOARD.register(star)
             GAME_BOARD.set_el(player.x, player.y-2, star)
         else:
@@ -111,8 +111,8 @@ class Key(GameElement):
         player.inventory.append("key")
         GAME_BOARD.draw_msg("Use the key to open the chest!")
 
-class Heart(GameElement):
-    IMAGE = "Heart"
+class Star(GameElement):
+    IMAGE = "Star"
     SOLID = True
 
 class Enemy(GameElement):
