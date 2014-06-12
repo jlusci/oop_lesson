@@ -42,8 +42,8 @@ class Chest(GameElement):
     def interact(self,player):
         print player.inventory
         if 'key' in player.inventory:
-            GAME_BOARD.draw_msg("Congratulations! You win!")
-            player.MOVES_TAKEN = -20 # game over
+            GAME_BOARD.draw_msg("Congratulations! You win! Type 'q' to quit.")
+            player.MOVES_LEFT = -1 # game over
             star = Star()
             GAME_BOARD.register(star)
             GAME_BOARD.set_el(player.x, player.y-2, star)
@@ -52,7 +52,7 @@ class Chest(GameElement):
 
 class Character(GameElement):
     IMAGE = "Princess"
-    MOVES_TAKEN = 0
+    MOVES_LEFT = GAME_MOVES
 
     def __init__(self):
         GameElement.__init__(self)
@@ -89,7 +89,7 @@ class orangeGem(Gem):
     def interact(self, player):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("You just acquired a gem! You earned 5 extra moves!")
-        player.MOVES_TAKEN -= 5
+        player.MOVES_LEFT += 5
 
 class greenGem(Gem):
     IMAGE = "GreenGem"
@@ -121,7 +121,7 @@ class Enemy(GameElement):
 
     def interact(self, player):
         GAME_BOARD.draw_msg("The bug attacked and took away 1 move!")
-        player.MOVES_TAKEN += 1
+        player.MOVES_LEFT -= 1
         
 ####   End class definitions    ####
 
@@ -201,7 +201,6 @@ def initialize():
 def keyboard_handler():
     direction = None
 
-
     if KEYBOARD[key.UP]:
         direction = "up"
     if KEYBOARD[key.DOWN]:
@@ -214,10 +213,10 @@ def keyboard_handler():
         sys.exit()
 
     if direction:
-        PLAYER.MOVES_TAKEN += 1
-        moves_left = GAME_MOVES - PLAYER.MOVES_TAKEN
-        if moves_left > 0:
-            GAME_BOARD.draw_msg("You have %r moves left." % moves_left)
+        # moves_left = GAME_MOVES - PLAYER.MOVES_TAKEN
+        if PLAYER.MOVES_LEFT > 0:
+            PLAYER.MOVES_LEFT -= 1
+            GAME_BOARD.draw_msg("You have %r moves left." % PLAYER.MOVES_LEFT)
 
             next_location = PLAYER.next_pos(direction)
             next_x = next_location[0]
@@ -236,5 +235,6 @@ def keyboard_handler():
                     GAME_BOARD.set_el(next_x, next_y, PLAYER)
             else:
                 GAME_BOARD.draw_msg("Like we'd like you go off the map!  No go.")
-        else:
+
+        elif PLAYER.MOVES_LEFT == 0:
             GAME_BOARD.draw_msg("You are out of moves, you lose.")
