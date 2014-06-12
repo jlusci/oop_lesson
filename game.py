@@ -97,11 +97,14 @@ class greenGem(Gem):
 
     def interact(self, player):
         player.inventory.append(self)
-        GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder. Game over, try again!"  )
+        GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder. Game over, \
+try again! Press 'q' to quit"  )
         GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
         deadlyrock = Rock()
         GAME_BOARD.register(deadlyrock)
         GAME_BOARD.set_el(PLAYER.x,PLAYER.y,deadlyrock)
+        player.MOVES_LEFT = -1 # game over
+
 
 class Key(GameElement):
     IMAGE = "Key"
