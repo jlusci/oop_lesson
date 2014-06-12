@@ -215,8 +215,6 @@ def keyboard_handler():
     if direction:
         # moves_left = GAME_MOVES - PLAYER.MOVES_TAKEN
         if PLAYER.MOVES_LEFT > 0:
-            PLAYER.MOVES_LEFT -= 1
-            GAME_BOARD.draw_msg("You have %r moves left." % PLAYER.MOVES_LEFT)
 
             next_location = PLAYER.next_pos(direction)
             next_x = next_location[0]
@@ -225,6 +223,8 @@ def keyboard_handler():
             if next_x in range(GAME_WIDTH) and next_y in range(GAME_HEIGHT):
 
                 existing_el = GAME_BOARD.get_el(next_x, next_y)
+                PLAYER.MOVES_LEFT -= 1
+                GAME_BOARD.draw_msg("You have %r moves left." % PLAYER.MOVES_LEFT)
 
                 if existing_el:
                     existing_el.interact(PLAYER)
@@ -234,7 +234,8 @@ def keyboard_handler():
                     GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
                     GAME_BOARD.set_el(next_x, next_y, PLAYER)
             else:
-                GAME_BOARD.draw_msg("Like we'd like you go off the map!  No go.")
+                GAME_BOARD.draw_msg("Like we'd like you go off the map!  No go. \
+You have %r moves left" % PLAYER.MOVES_LEFT)
 
         elif PLAYER.MOVES_LEFT == 0:
             GAME_BOARD.draw_msg("You are out of moves, you lose.")
