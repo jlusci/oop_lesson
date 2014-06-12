@@ -4,6 +4,7 @@ from pyglet.window import key
 from core import GameElement
 import sys
 import time
+import random
 
 #### DO NOT TOUCH ####
 GAME_BOARD = None
@@ -123,8 +124,20 @@ class Enemy(GameElement):
     SOLID = True
 
     def interact(self, player):
-        GAME_BOARD.draw_msg("The bug attacked and took away 1 move!")
         player.MOVES_LEFT -= 1
+        GAME_BOARD.draw_msg("The bug attacked and took away 1 move! \
+You have %r moves left" % player.MOVES_LEFT)
+        
+    def next_pos(self, direction):
+        if direction == "up":
+            return (self.x, self.y-1)
+        elif direction == "down":
+            return (self.x, self.y+1)
+        elif direction == "left":
+            return (self.x-1, self.y)
+        elif direction == "right":
+            return (self.x+1, self.y)
+        return None        
         
 ####   End class definitions    ####
 
@@ -132,6 +145,12 @@ def initialize():
     """Put game initialization code here"""
     global PLAYER
     PLAYER = Character()
+    global ENEMY 
+    ENEMY = Enemy()
+
+    GAME_BOARD.register(ENEMY)
+    GAME_BOARD.set_el(3, 4, ENEMY)
+
     GAME_BOARD.register(PLAYER)
     GAME_BOARD.set_el(6, 6, PLAYER)
     print PLAYER
@@ -197,9 +216,31 @@ def initialize():
     GAME_BOARD.register(helper)
     GAME_BOARD.set_el(1, 5, helper)
 
-    bug = Enemy()
-    GAME_BOARD.register(bug)
-    GAME_BOARD.set_el(3, 4, bug)
+
+def enemy_handler():
+    # print "enemy handler"
+    possible_moves = ["up","down","left","right"]
+    direction = possible_moves[random.randrange(0,4)]
+
+    if PLAYER.MOVES_LEFT > 0:
+
+        next_location = ENEMY.next_pos(direction)
+        next_x = next_location[0]
+        next_y = next_location[1]
+
+        if next_x in range((GAME_WIDTH - 1)) and next_y in range((GAME_HEIGHT - 1)):
+
+            existing_el = GAME_BOARD.get_el(next_x, next_y)
+
+            # if existing_el:
+            #     existing_el.interact(PLAYER)
+
+            if existing_el is None:
+                # If there's nothing there, walk through
+                GAME_BOARD.del_el(ENEMY.x,ENEMY.y)
+                GAME_BOARD.set_el(next_x, next_y, ENEMY)
+            if existing_el == PLAYER:
+                ENEMY.interact(PLAYER)
 
 def keyboard_handler():
     direction = None
