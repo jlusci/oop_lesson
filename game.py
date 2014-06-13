@@ -71,7 +71,7 @@ class Character(GameElement):
         return None
 
 class Zombie(Character):
-    IMAGE = "Boy"
+    IMAGE = "Zombie"
 
 class Helper(GameElement):
     IMAGE = "Cat"
@@ -101,21 +101,13 @@ class greenGem(Gem):
 
     def interact(self, player):
         player.inventory.append(self)
-        GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder. Game over, \
-try again! Press 'q' to quit or continue as a zombie."  )
+        GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder. \
+Press 'q' to quit or continue as a zombie."  )
         GAME_BOARD.del_el(player.x,player.y)
         deadlyrock = Rock()
         GAME_BOARD.register(deadlyrock)
         GAME_BOARD.set_el(player.x,player.y,deadlyrock)
-        # player.MOVES_LEFT = -1 # game over
-        global PLAYER
-        zombie = Zombie()
-        GAME_BOARD.register(zombie)
-        GAME_BOARD.set_el(player.x, player.y, zombie)
-        zombie.inventory = player.inventory
-
-        PLAYER = zombie
-
+        player.MOVES_LEFT = -1 # game over
 
 class Key(GameElement):
     IMAGE = "Key"
@@ -293,3 +285,14 @@ You have %r moves left" % PLAYER.MOVES_LEFT)
 
         elif PLAYER.MOVES_LEFT == 0:
             GAME_BOARD.draw_msg("You are out of moves, you lose. Press 'q' to quit")
+
+        else: 
+            global PLAYER
+            zombie = Zombie()
+            GAME_BOARD.register(zombie)
+            GAME_BOARD.set_el(PLAYER.x, PLAYER.y, zombie)
+            zombie.inventory = PLAYER.inventory
+
+            PLAYER = zombie
+            PLAYER.MOVES_LEFT = 7
+            GAME_BOARD.draw_msg("You are now a zombie! You have %r moves left." % PLAYER.MOVES_LEFT)
