@@ -230,7 +230,16 @@ def run():
     except AttributeError:
         print "No keyboard handler"
         pass
-        
+
+    try:
+        evil_handler = game.enemy_handler
+        def enemy_handler(dt):
+            evil_handler()
+        pyglet.clock.schedule_interval(enemy_handler, 2.0)
+    except AttributeError:
+        print "No enemy handler"
+        pass       
+    
     # Set up the update clock
     pyglet.clock.schedule_interval(update, 1/10.)
     game.initialize()

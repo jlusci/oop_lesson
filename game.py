@@ -47,7 +47,7 @@ class Chest(GameElement):
             player.MOVES_LEFT = -1 # game over
             star = Star()
             GAME_BOARD.register(star)
-            GAME_BOARD.set_el(player.x, player.y-2, star)
+            GAME_BOARD.set_el(self.x, self.y, star)
         else:
             GAME_BOARD.draw_msg("Find the key to open the chest.")
 
@@ -69,6 +69,9 @@ class Character(GameElement):
         elif direction == "right":
             return (self.x+1, self.y)
         return None
+
+class Zombie(Character):
+    IMAGE = "Boy"
 
 class Helper(GameElement):
     IMAGE = "Cat"
@@ -99,12 +102,19 @@ class greenGem(Gem):
     def interact(self, player):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("Green gems are deadly! You are now a boulder. Game over, \
-try again! Press 'q' to quit"  )
-        GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
+try again! Press 'q' to quit or continue as a zombie."  )
+        GAME_BOARD.del_el(player.x,player.y)
         deadlyrock = Rock()
         GAME_BOARD.register(deadlyrock)
-        GAME_BOARD.set_el(PLAYER.x,PLAYER.y,deadlyrock)
-        player.MOVES_LEFT = -1 # game over
+        GAME_BOARD.set_el(player.x,player.y,deadlyrock)
+        # player.MOVES_LEFT = -1 # game over
+        global PLAYER
+        zombie = Zombie()
+        GAME_BOARD.register(zombie)
+        GAME_BOARD.set_el(player.x, player.y, zombie)
+        zombie.inventory = player.inventory
+
+        PLAYER = zombie
 
 
 class Key(GameElement):
@@ -153,7 +163,6 @@ def initialize():
 
     GAME_BOARD.register(PLAYER)
     GAME_BOARD.set_el(6, 6, PLAYER)
-    print PLAYER
 
     rock_positions = [
             (2, 1),
@@ -254,7 +263,8 @@ def keyboard_handler():
     if KEYBOARD[key.RIGHT]:
         direction = "right"
     if KEYBOARD[key.Q]:
-        sys.exit()
+        sys.exit()      
+
 
     if direction:
         # moves_left = GAME_MOVES - PLAYER.MOVES_TAKEN
@@ -278,8 +288,8 @@ def keyboard_handler():
                     GAME_BOARD.del_el(PLAYER.x,PLAYER.y)
                     GAME_BOARD.set_el(next_x, next_y, PLAYER)
             else:
-                GAME_BOARD.draw_msg("Like we'd like you go off the map!  No go. \
+                GAME_BOARD.draw_msg("Like we'd let you go off the map!  No go. \
 You have %r moves left" % PLAYER.MOVES_LEFT)
 
         elif PLAYER.MOVES_LEFT == 0:
-            GAME_BOARD.draw_msg("You are out of moves, you lose.")
+            GAME_BOARD.draw_msg("You are out of moves, you lose. Press 'q' to quit")
